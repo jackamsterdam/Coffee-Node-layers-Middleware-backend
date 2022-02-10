@@ -1,0 +1,15 @@
+{
+  "name": "layers-espresso-and-midleware-hw-due-feb-10-2022",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start": "ts-node src/app.ts",
+    "dev": "nodemon --exec ts-node src/app.ts"
+  },
+  "keywords": [],
+  "author": "Jack Amsterdam",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^17.0.14"
+  }
+}
