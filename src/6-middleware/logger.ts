@@ -1,7 +1,10 @@
 import {Request, Response, NextFunction} from 'express'
 
 function logging(request: Request, response: Response, next: NextFunction): void {
-  console.log(`User is going to update data ${request.id}`)  //reqest.method
+  console.log('request.body:', request.body)
+ //there is no id sent cant read it!! 
+  console.log(`User is going to update data ${request.body.id}`)  //reqest.method
+  
 
   next()
 }

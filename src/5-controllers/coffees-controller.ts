@@ -18,9 +18,14 @@ router.get('/api/coffees/:id', async(request: Request, response: Response) => {
 })
 
 router.post('/api/coffees',priceChecker, async(request: Request, response: Response) => {
-    const coffee = new CoffeeModel(request.body)
+    try {
+         const coffee = new CoffeeModel(request.body)
     const addedCoffee = await coffeesLogic.addOneCoffeeAsync(coffee)
-    response.status(201).response.json(addedCoffee)
+    response.status(201).json(addedCoffee)
+    } catch(err: any) {
+        console.log(err)
+    }
+   
 })
 
 router.put('/api/coffees/:id', logging, async(request: Request, response: Response) => {

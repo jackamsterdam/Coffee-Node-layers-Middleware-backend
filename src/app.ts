@@ -1,19 +1,21 @@
 import express from 'express'
 import coffeesController from './5-controllers/coffees-controller'
+import errorsHandler from './6-middleware/errors-handler'
 import log from './6-middleware/log'
-
+import preventGarbage from './6-middleware/prevent-garbage'
 const server = express()
 
-express.use(express.json())
+server.use(express.json())
 
 server.use(log)
 
+server.use(preventGarbage)
 server.use('/', coffeesController)
 
 
 
 
-
+server.use(errorsHandler) // Catch-All Middleware
 
 server.listen(3001, () => console.log('Listening on port 3001...'))
 
