@@ -14,7 +14,6 @@ server.use('/', coffeesController)
 
 
 
-
 server.use(errorsHandler) // Catch-All Middleware
 
 server.listen(3001, () => console.log('Listening on port 3001...'))
