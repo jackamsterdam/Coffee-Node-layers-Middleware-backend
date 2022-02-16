@@ -4,6 +4,7 @@ import CoffeeModel from '../2-models/coffee-model'
 import coffeesLogic from '../4-business-logic-layer/coffees-logic'
 import logging from '../6-middleware/logger'
 import priceChecker from '../6-middleware/price-checker'
+import verifyLoggedIn from '../6-middleware/verify-logged-in'
 
 const router = express.Router()
 
@@ -16,7 +17,7 @@ router.get('/api/coffees', async (request: Request, response: Response, next: Ne
         response.json(coffees)
 
     }
-    catch (err: any) {
+    catch (err: any) {  //?Btw its nice to see crashes get caught in catch and the entire program keeps running good.  ( thats why its good to log errors in error handlwer with windston casue you can see where the crashes wehre)
         next(err)
     }
 })
@@ -26,14 +27,17 @@ router.get('/api/coffees/:id', async (request: Request, response: Response, next
         console.log('request.body enter no body in get request  only sent in url', request.body);
         const id = +request.params.id
         const coffee = await coffeesLogic.getOneCoffeeAsync(id)
+        // if (!coffee) {   this if condition can be in bll instaead cause anyways all the errors are מתנקזים to here and then to error handler 
+        //     next()
+        // }
         response.json(coffee)  //this is the literal object coffee returned :   { id: 1, code: 2342, type: 'Arbiska', price: 2.98, strength: 1 }
     }
-    catch (err: any) {
-        next(err)
+    catch (err: any) {  //errror object instance errorModel thrown from bll ends up here 
+        next(err)  //err is an ojbect that is an instance of ErrorModel not Error
     }
 })
 
-router.post('/api/coffees', priceChecker, async (request: Request, response: Response, next: NextFunction) => {
+router.post('/api/coffees', verifyLoggedIn, priceChecker, async (request: Request, response: Response, next: NextFunction) => {
 
     try {
         console.log('requiest.body before object oriented turinging from literal object to instance of coffeeeModel,', request.body); // does not have id !                  
@@ -58,8 +62,9 @@ router.post('/api/coffees', priceChecker, async (request: Request, response: Res
     }
 })
 
-router.put('/api/coffees/:id', logging, async (request: Request, response: Response, next: NextFunction) => {
+router.put('/api/coffees/:id', [logging,verifyLoggedIn], async (request: Request, response: Response, next: NextFunction) => {
     try {
+
         console.log('request.body enter', request.body); //{ code: 4444, type: 'MILK', price: 0, strength: 5 }
 
         const id = +request.params.id
@@ -74,7 +79,7 @@ router.put('/api/coffees/:id', logging, async (request: Request, response: Respo
     }
 })
 
-router.patch('/api/coffees/:id', async (request: Request, response: Response, next: NextFunction) => {
+router.patch('/api/coffees/:id', verifyLoggedIn,async (request: Request, response: Response, next: NextFunction) => {
     try {
         console.log('request.body enter', request.body);    // { code: 9999999999 }  updating partial
         const id = +request.params.id
@@ -105,7 +110,7 @@ router.patch('/api/coffees/:id', async (request: Request, response: Response, ne
     }
 })
 
-router.delete('/api/coffees/:id', async (request: Request, response: Response, next: NextFunction) => {
+router.delete('/api/coffees/:id',verifyLoggedIn, async (request: Request, response: Response, next: NextFunction) => {
     try {
         console.log('request.body enter', request.body); //{}
         const id = +request.params.id
