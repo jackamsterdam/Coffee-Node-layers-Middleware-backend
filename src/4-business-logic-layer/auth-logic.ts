@@ -4,6 +4,12 @@ import ErrorModel from '../2-models/error-model'
 import dal from '../3-data-access-layer/dal'
 import cyber from '../7-utils/cyber'
 
+//another way: 
+// async function isUsernameTaken(username) {
+//     const users = await dal.getAllUsersAsync()
+//     const index = users.findIndex(u => u.username === username) 
+//     return index !== -1
+// }
 
 
 async function registerAsync(user: UserModel): Promise<string> {
@@ -16,7 +22,7 @@ async function registerAsync(user: UserModel): Promise<string> {
     // Get all users (in real database we don't need it)
     const users = await dal.getAllUsersAsync()
 
-    // hw check: 
+    // hw check: another way to solve: 
      const duplicate = users.find(u => u.username === user.username)
      console.log("duplicate", duplicate);
      if (duplicate) {  //rmember first negative in if
@@ -92,5 +98,6 @@ async function loginAsync(credentials: CredentialModel): Promise<string> {
 
 export default {
   registerAsync,
-  loginAsync
+  loginAsync,
+//   isUsernameTaken
 }

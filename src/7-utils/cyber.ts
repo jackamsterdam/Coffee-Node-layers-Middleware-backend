@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken'
 import UserModel from '../2-models/user-model'
-
+//?why did these two function not use promises but the middle one did??
 // jwt-helper.ts you call this file also
 const secretKey = 'KittensAreCute'
 
@@ -39,7 +39,7 @@ async function verifyToken(authorizationHeader: string): Promise <boolean> {
                 return  //why do i need this
             }
 
-// Here the token is legal: 
+                // Here the token is legal: }
          resolve(true)
         })
 
@@ -48,7 +48,18 @@ async function verifyToken(authorizationHeader: string): Promise <boolean> {
     })
 }
 
+function getUserFromToken(authorizationHeader: string): UserModel {
+console.log('authorizaionheader', authorizationHeader)
+    //Extract token
+    const token = authorizationHeader.split(' ')[1]
 
+    //Extract payload from the token  //payload = {{}}
+    const payload:any = jwt.decode(token)
+
+    //Extract user   //user {}
+    const user = payload.user 
+    return user   //and inside user {} we hae the role 
+}
 
 
 
@@ -59,5 +70,9 @@ async function verifyToken(authorizationHeader: string): Promise <boolean> {
 
 export default {
     getNewToken,
-    verifyToken
+    verifyToken,
+    getUserFromToken
 }
+
+
+

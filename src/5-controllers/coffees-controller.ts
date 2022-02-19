@@ -4,6 +4,7 @@ import CoffeeModel from '../2-models/coffee-model'
 import coffeesLogic from '../4-business-logic-layer/coffees-logic'
 import logging from '../6-middleware/logger'
 import priceChecker from '../6-middleware/price-checker'
+import verifyAdmin from '../6-middleware/verify-admin'
 import verifyLoggedIn from '../6-middleware/verify-logged-in'
 
 const router = express.Router()
@@ -110,7 +111,8 @@ router.patch('/api/coffees/:id', verifyLoggedIn,async (request: Request, respons
     }
 })
 
-router.delete('/api/coffees/:id',verifyLoggedIn, async (request: Request, response: Response, next: NextFunction) => {
+router.delete('/api/coffees/:id', verifyAdmin, async (request: Request, response: Response, next: NextFunction) => {
+// router.delete('/api/coffees/:id',[verifyLoggedIn, verifyAdmin], async (request: Request, response: Response, next: NextFunction) => {
     try {
         console.log('request.body enter', request.body); //{}
         const id = +request.params.id

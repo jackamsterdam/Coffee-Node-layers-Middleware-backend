@@ -35,6 +35,8 @@ router.post('/api/auth/register', async (request: Request, response: Response, n
         //     role: 1
         //   }
 
+            // if (await authLogic.isUsernameTaken(user.username)) return response.status(400).send(`Username ${user.username} already taken`)
+
 
         const token = await authLogic.registerAsync(user)
         console.log("token in controller", token);
