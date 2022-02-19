@@ -1,5 +1,6 @@
 import Joi from "joi"
 import strengthEnum from "./strength-enum"
+import { UploadedFile } from "express-fileupload"
 
 class CoffeeModel {
   id: number
@@ -7,6 +8,8 @@ class CoffeeModel {
   type: string
   price: number
   strength: strengthEnum
+  image: UploadedFile
+  imageName: string
 
   constructor(coffee: CoffeeModel) {  //Copy Constructor
       this.id = coffee.id 
@@ -14,6 +17,8 @@ class CoffeeModel {
       this.type = coffee.type 
       this.price = coffee.price 
       this.strength = coffee.strength
+      this.image = coffee.image 
+      this.imageName = coffee.imageName
   }
 
   doSomething() {
@@ -26,8 +31,11 @@ class CoffeeModel {
       id: Joi.forbidden(),
       code: Joi.number().required(),
       type: Joi.string().required().min(2).max(100),
-      price: Joi.number().required().positive().min(1).max(10000),  //.integer()
-      strength: Joi.string().required()
+      //supposed to be required but for some reason postman not working
+      price: Joi.number().optional().positive().min(1).max(10000),  //.integer()
+      strength: Joi.string().required(),
+      image: Joi.object().optional(),
+      imageName: Joi.string().optional()
     })
 // name: Joi.string().required().min(2).max(100).regex(/^[A-Z].*$/)
     validatePost(): string {
@@ -40,7 +48,9 @@ class CoffeeModel {
       code: Joi.number().required().min(2).max(100),
       type: Joi.string().required().min(2).max(100),
       price: Joi.number().required().positive().min(1).max(10000),
-      strength: Joi.string().required()
+      strength: Joi.string().required(),
+      image: Joi.object().optional(),
+      imageName: Joi.string().optional()
 
     })
 
@@ -54,7 +64,9 @@ class CoffeeModel {
       code: Joi.number().optional().min(2).max(100),
       type: Joi.string().optional().min(2).max(100),
       price: Joi.number().optional().positive().min(1).max(10000),
-      strength: Joi.string().optional()
+      strength: Joi.string().optional(),
+      image: Joi.object().optional(),
+      imageName: Joi.string().optional()
     })
 
     validatePatch(): string {

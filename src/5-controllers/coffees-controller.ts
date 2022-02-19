@@ -1,6 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express'
-import { nextTick } from 'process'
+import path from 'path'
 import CoffeeModel from '../2-models/coffee-model'
+import ErrorModel from '../2-models/error-model'
 import coffeesLogic from '../4-business-logic-layer/coffees-logic'
 import logging from '../6-middleware/logger'
 import priceChecker from '../6-middleware/price-checker'
@@ -41,6 +42,8 @@ router.get('/api/coffees/:id', async (request: Request, response: Response, next
 router.post('/api/coffees', verifyLoggedIn, priceChecker, async (request: Request, response: Response, next: NextFunction) => {
 
     try {
+        request.body.image = request.files?.pic
+
         console.log('requiest.body before object oriented turinging from literal object to instance of coffeeeModel,', request.body); // does not have id !                  
         // LITERAL OBJECT WITH NO METHODS @@!!!!     { code: 8888, type: 'ChOCO', price: 0, strength: 1 }
         //   coffee.    see intelleiscence before!                       
@@ -55,6 +58,8 @@ router.post('/api/coffees', verifyLoggedIn, priceChecker, async (request: Reques
         //     strength: 1
         //   }
 
+
+
         const addedCoffee = await coffeesLogic.addOneCoffeeAsync(coffee)
         response.status(201).json(addedCoffee)
 
@@ -63,10 +68,13 @@ router.post('/api/coffees', verifyLoggedIn, priceChecker, async (request: Reques
     }
 })
 
-router.put('/api/coffees/:id', [logging,verifyLoggedIn], async (request: Request, response: Response, next: NextFunction) => {
+router.put('/api/coffees/:id', [logging, verifyLoggedIn], async (request: Request, response: Response, next: NextFunction) => {
     try {
 
         console.log('request.body enter', request.body); //{ code: 4444, type: 'MILK', price: 0, strength: 5 }
+
+        //for files (image)
+        request.body.image = request.files?.pic
 
         const id = +request.params.id
         request.body.id = id
@@ -80,8 +88,9 @@ router.put('/api/coffees/:id', [logging,verifyLoggedIn], async (request: Request
     }
 })
 
-router.patch('/api/coffees/:id', verifyLoggedIn,async (request: Request, response: Response, next: NextFunction) => {
+router.patch('/api/coffees/:id', verifyLoggedIn, async (request: Request, response: Response, next: NextFunction) => {
     try {
+        request.body.image = request.files?.pic
         console.log('request.body enter', request.body);    // { code: 9999999999 }  updating partial
         const id = +request.params.id
         request.body.id = id
@@ -112,8 +121,9 @@ router.patch('/api/coffees/:id', verifyLoggedIn,async (request: Request, respons
 })
 
 router.delete('/api/coffees/:id', verifyAdmin, async (request: Request, response: Response, next: NextFunction) => {
-// router.delete('/api/coffees/:id',[verifyLoggedIn, verifyAdmin], async (request: Request, response: Response, next: NextFunction) => {
+    // router.delete('/api/coffees/:id',[verifyLoggedIn, verifyAdmin], async (request: Request, response: Response, next: NextFunction) => {
     try {
+
         console.log('request.body enter', request.body); //{}
         const id = +request.params.id
         await coffeesLogic.deleteCoffeeAsync(id)
@@ -122,6 +132,18 @@ router.delete('/api/coffees/:id', verifyAdmin, async (request: Request, response
     } catch (err: any) {
         next(err)
     }
+})
+
+router.get('/api/coffees/images/:imageName', async (request: Request, response: Response, next: NextFunction) => {
+    try {
+        const imageName = request.params.imageName
+        const absolutePath = path.join(__dirname, '..','0-assets', 'images','coffees', imageName)
+
+        response.sendFile(absolutePath)
+    } catch (err: any) {
+        next(err)
+    }
+
 })
 
 

@@ -1,10 +1,10 @@
 [
     {
         "id": 1,
-        "code": 44,
-        "type": "MILK",
-        "price": 88,
-        "strength": "Five"
+        "code": 2342,
+        "type": "Arbiska",
+        "price": 2.98,
+        "strength": 1
     },
     {
         "id": 2,
@@ -22,23 +22,9 @@
     },
     {
         "id": 4,
-        "code": 8888,
-        "type": "ChOCO",
-        "price": 8.88,
-        "strength": "One"
-    },
-    {
-        "id": 5,
-        "code": 8888,
-        "type": "ChOCO",
-        "price": 8.88,
-        "strength": "One"
-    },
-    {
-        "id": 6,
-        "code": 8888,
-        "type": "ChOCO",
-        "price": 8.88,
-        "strength": "One"
+        "code": "5555",
+        "type": "black",
+        "strength": "four",
+        "imageName": "2ee9e9a0-d8dc-4139-ac86-d24f95a21bc3.JPG"
     }
 ]

@@ -1,7 +1,8 @@
 import CoffeeModel from "../2-models/coffee-model";
 import ErrorModel from "../2-models/error-model";
 import dal from "../3-data-access-layer/dal";
-
+import {v4 as uuid} from 'uuid'
+import safeDelete from '../7-utils/safe-delete'
 
 async function getAllCoffeesAsync(): Promise<CoffeeModel[]> {
 
@@ -48,7 +49,28 @@ async function addOneCoffeeAsync(coffee: CoffeeModel): Promise<CoffeeModel> {
     //     strength: 1
     //   }
     coffee.id = id 
+    // coffee.id = coffees[coffees.length-1].id+1 one line
     console.log('coffee after id', coffee)  //CoffeeModel { id: 4, code: 8888, type: 'ChOCO', price: 0, strength: 1 }
+
+//image handling
+    if (coffee.image) {
+        const extension = coffee.image.name.substring(coffee.image.name.lastIndexOf('.'))
+        coffee.imageName = uuid() + extension 
+
+        await coffee.image.mv('./src/0-assets/images/coffees/' + coffee.imageName)
+        delete coffee.image
+    }
+
+
+
+
+
+
+
+
+
+
+
     coffees.push(coffee)
     await dal.saveAllCoffeesAsync(coffees)
     return coffee 
@@ -77,6 +99,16 @@ async function updateFullCoffeeAsync(coffee: CoffeeModel): Promise<CoffeeModel> 
     //     { id: 3, code: 5323, type: 'Espresso', price: 7.98, strength: 5 },
     //     { id: 4, code: 8888, type: 'ChOCO', price: 0, strength: 1 }
     //   ]
+
+    coffee.imageName = coffees[indexToUpdate].imageName
+    // image handling 
+    if (coffee.image) {
+       safeDelete('./src/0-assets/images/coffees/' + coffee.imageName)
+      const extension = coffee.image.name.substring(coffee.image.name.lastIndexOf('.'))
+      coffee.imageName = uuid() + extension 
+      await coffee.image.mv('./src/0-assets/images/coffees/' + coffee.imageName)
+      delete coffee.image
+    }
     
      coffees[indexToUpdate] = coffee 
      console.log('coffees after updated', coffees);
@@ -128,6 +160,16 @@ async function updatePartialCoffeeAsync(coffee: CoffeeModel): Promise<CoffeeMode
     //     strength: undefined
     //   }
 
+    coffee.imageName = dbCoffee.imageName
+
+    if (coffee.image) {
+        safeDelete('./src/0-assets/images/coffees/' + coffee.imageName)
+        const extension = coffee.image.name.substring(coffee.image.name.lastIndexOf('.'))
+        coffee.imageName = uuid() + extension 
+        await coffee.image.mv('./src/0-assets/images/coffees/' + coffee.imageName)
+        delete coffee.image
+    }
+
     for (const prop in coffee) {
         if (coffee[prop]) {  //lol if you wrote above if (dbcofee) instead of if (!dbcoffee ) you would get error cannot set of undefined lol cause dbcoffee is undefined.id lol
             dbCoffee[prop] = coffee[prop]
@@ -152,7 +194,7 @@ async function updatePartialCoffeeAsync(coffee: CoffeeModel): Promise<CoffeeMode
     await dal.saveAllCoffeesAsync(coffees)
     return dbCoffee
 }
-
+// להנגיש תמונה 
 async function deleteCoffeeAsync(id: number) : Promise<void> {
     const coffees = await dal.getAllCoffeesAsync()
 console.log('id',id);  //1
@@ -168,6 +210,10 @@ console.log('coffees before delete', coffees)
     if (indexToDelete === -1) {
         throw new ErrorModel(404, `Resource with id ${id} not found.`)
     }
+
+    safeDelete('./src/0-assets/images/coffees/' + coffees[indexToDelete].imageName)
+
+
     coffees.splice(indexToDelete,1)
     console.log('coffees after delete', coffees)
     // [

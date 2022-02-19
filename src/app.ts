@@ -5,6 +5,7 @@ import authController from './5-controllers/auth-controller'
 import errorsHandler from './6-middleware/errors-handler'
 import log from './6-middleware/log'
 import preventGarbage from './6-middleware/prevent-garbage'
+import fileUpload from 'express-fileupload'
 const server = express()
 
 //how to block everything at once with middleware without login? 
@@ -14,6 +15,8 @@ server.use(express.json())
 server.use(log)
 
 server.use(preventGarbage)  //thats a reference to preventGarbage function which is a middleware function so sanme thing like putting for * below a middleware function
+
+server.use(fileUpload())
 
 server.use('/', authController)
 server.use('/', coffeesController)
